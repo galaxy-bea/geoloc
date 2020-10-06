@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% load static %}
+    {% block title %}<title>GeoLoc</title>{% endblock %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <base href="/"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+        crossorigin="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+
+    <!-- <link rel="stylesheet" href="{% static 'css/app.css' %}"></link> -->
+
+    <style>
+        html, body {width: 100%;height: 100%;margin: 0;padding: 0;}
+
+        #mapid {
+            position: relative;
+            width: 100.0%;
+            height: 100.0%;
+            left: 0.0%;
+            top: 0.0%;
+            height: 100%;
+        }
+
+        .container {
+         height: 100%;
+         display: -webkit-box;
+         display: -ms-flexbox;
+         display: flex;
+         -webkit-box-orient: vertical;
+         -webkit-box-direction: normal;
+             -ms-flex-direction: column;
+                 flex-direction: column;
+        }
+
+        .header {
+          -webkit-box-flex: 0;
+              -ms-flex: 0 0 auto;
+                  flex: 0 0 auto;
+          padding: 2rem;
+          border: 2px solid black
+        }
+
+        .title {
+          /* Fallback for calc / vmin */
+          font-size: 2rem;
+          font-size: calc( 2vmin + 1rem);
+        }
+
+        .map-container {
+          height: 100%;
+          /* Fallback for vmin */
+          padding: 0px 1rem 1rem 1rem;
+          padding: 0px 1vmin 1vmin 1vmin;
+        }
+
+        .map-frame {
+          height: 100%;
+          width: 100%;
+        /*   We use outline over border as has issues in some cases */
+          outline: 1px solid black;
+        }
+
+        #map-id {
+          height: 100%;
+        }
+
+        .custom-menu {
+            display: none;
+            z-index: 1000;
+            position: absolute;
+            overflow: hidden;
+            border: 1px solid #CCC;
+            white-space: nowrap;
+            font-family: sans-serif;
+            background: #FFF;
+            color: #333;
+            border-radius: 5px;
+            padding: 0;
+        }
+    </style>
+
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+        crossorigin=""></script>
+
+</head>
+
+<body>
+    {% block body %}
+    <!-- POPOVER context -->
+    <div class="custom-menu">
+        <div class="input-group p-2">
+            <input type="text" id="emailInput" class="form-control" placeholder="Enter your Email...">
+            <div class="input-group-append">
+              <button class="btn btn-success" id="sendEmailButton" type="submit">Go</button>
+            </div>
+          </div>
+    </div>
+     <div class="container">
+      <div class="header row">
+        <div class="form-group col-sm-2">
+          <label for="usr">Category:</label>
+          <div class="form-group">
+            <select id='categories' class="form-control categories">
+              <option value="" selected="selected">Please select categories</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group col-sm-2">
+          <label for="usr">Sub Category:</label>
+          <div class="form-group">
+            <select id="subcategory" class="form-control">
+              <option value="" selected="selected">Please select sub categories</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group col-sm-2">
+            <button id = 'search' type="button" class="btn btn-primary">Search</button>
+        </div>
+      </div>
+      <div class="map-container">
+        <div class="map-frame">
+        <div id="mapid"></div>
+    </div>
+  </div>
+</div>
+    {% endblock %}
+
+    <!-- <script src="{% static 'js/app.js' %}"></script> -->
+    <script>
+        let markersLayer = new L.LayerGroup();
+        let mymap;
+        let newMarkerLatLng;
+        let getAllMarkers;
+        let categories;
+
+        $(document).ready(function () {
+            initMap();
+            getAllMarker();
+            getCategories();
+        });
+
+         $("#search").click(function(){
+            var categories = $("#categories").val()
+            var subcategories = $("#subcategory").val()
+
+            $.ajax({
+              type: "POST",
+              url: "ajax/search/",
+              data: { categories : categories, subcategories: subcategories }
+            }).done(function(data){
+              generateMarkers(data)
+            });
+         });
+
+        $("select.categories").change(function(){
+            var selectedCountry = $(".categories option:selected").val();
+            $.ajax({
+              type: "POST",
+              url: "ajax/subcategories/",
+              data: { id : selectedCountry }
+            }).done(function(data){
+              createSubCategoriesOptions(data)
+            });
+
+        });
+
+        // ajax example
+        function getAllMarker() {
+            var request = new XMLHttpRequest();
+            request.onreadystatechange = function () {
+                if (this.readyState === 4 && this.status === 200) {
+                    data = JSON.parse(this.responseText)
+                    generateMarkers(data)
+                }
+            };
+            request.open("GET", "ajax/getMarkers/", true);
+            request.send();
+        }
+
+
+        // ajax example
+        function getCategories() {
+            var request = new XMLHttpRequest();
+            request.onreadystatechange = function () {
+                if (this.readyState === 4 && this.status === 200) {
+                    data = JSON.parse(this.responseText)
+                    createCategoriesOptions(data)
+                }
+            };
+            request.open("GET", "ajax/categories/", true);
+            request.send();
+        }
+
+        function createCategoriesOptions(data){
+          data.data.forEach((item) => {
+            $('#categories').append(new Option(item.category, item.id));
+          });
+        }
+
+        function createSubCategoriesOptions(data){
+          data.data.forEach((item) => {
+            $('#subcategory').empty().append(new Option(item.sub_category, item.id));
+          });
+        }
+
+        function generateMarkers(data) {
+          markersLayer.clearLayers();
+          data.data.forEach((item) => {
+            placeMarker(item.latitude, item.longitude, item.email)
+          });
+
+        }
+
+        function placeMarker(lat, long, data){
+          marker =
+            L.marker([lat, long]).bindPopup(data).addTo(mymap).on('click', function(e) {
+            });
+          markersLayer.addLayer(marker);
+          markersLayer.addTo(mymap);
+        }
+
+        function genratePopup(e){
+          L.popup()
+            .setLatLng(this.getLatLng())
+            .setContent('<p>Hello world!<br />This is a nice popup.</p>')
+            .openOn(mymap);
+        }
+
+        $("#sendEmailButton").on("click", function (e) {
+           const email = $('#emailInput').val();
+            if (!email) {
+                return;
+            }
+            sendEmail(email, newMarkerLatLng.lat, newMarkerLatLng.lng)
+            newMarkerLatLng = null;
+            $(".custom-menu").hide(100);
+        });
+
+
+        $(document).bind("mousedown", function (e) {
+
+            // If the clicked element is not the menu
+            if (!$(e.target).parents(".custom-menu").length > 0) {
+
+                // Hide it
+                $(".custom-menu").hide(100);
+            }
+        });
+
+        function initMap() {
+            mymap = L.map('mapid').setView([51.505, -0.09], 13);
+            L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+                maxZoom: 18,
+                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+                    '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+                    'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+                id: 'mapbox/streets-v11',
+                tileSize: 512,
+                zoomOffset: -1
+            }).addTo(mymap);
+
+            mymap.on('contextmenu', (e) => {
+                console.log('eeee', e.originalEvent.pageY);
+
+                $(".custom-menu")
+                    .finish()
+                    .toggle(100)
+                    .css({
+                        top: e.originalEvent.pageY + "px",
+                        left: e.originalEvent.pageX + "px"
+                    });
+
+                newMarkerLatLng = e.latlng
+            });
+        }
+
+        function addNewMarker() {
+            const email = $('#email').val();
+
+            if (!email || !description) {
+
+                return;
+            }
+            console.log(email)
+
+            newMarkerLatLng = null;
+
+        }
+
+
+
+        // ajax example
+        function sendEmail(email, lat, long) {
+            var data = new FormData();
+
+            data.append('email', email);
+            data.append('latitude', lat);
+            data.append('longitude', long);
+
+            // Creating the XMLHttpRequest object
+            var request = new XMLHttpRequest();
+
+            request.open("POST", "ajax/create-marker/", true);
+            // Defining event listener for readystatechange event
+            request.onreadystatechange = function () {
+                if (this.readyState === 4 && this.status === 200) {
+                    console.log(this.responseText);
+                }
+            };
+
+            // Sending the request to the server
+            request.send(data);
+        }
+
+    </script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</body>
+
+</html>
