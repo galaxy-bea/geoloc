@@ -10,8 +10,8 @@
     <link rel="stylesheet" href="{% static 'css/leaflet.css' %}"></link>
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}"></link>
     <link rel="stylesheet" href="{% static 'css/font-awesome.css' %}"></link>
+    <script src="{% static 'js/jquery.min.js' %}"></script>
     <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'bootstrap/js/jquery.min.js' %}"></script>
     <style>
         html, body {width: 100%;height: 100%;margin: 0;padding: 0;}
 
@@ -22,49 +22,6 @@
             left: 0.0%;
             top: 0.0%;
             height: 100%;
-        }
-
-        .container {
-         height: 100%;
-         display: -webkit-box;
-         display: -ms-flexbox;
-         display: flex;
-         -webkit-box-orient: vertical;
-         -webkit-box-direction: normal;
-             -ms-flex-direction: column;
-                 flex-direction: column;
-        }
-
-        .header {
-          -webkit-box-flex: 0;
-              -ms-flex: 0 0 auto;
-                  flex: 0 0 auto;
-          padding: 2rem;
-          border: 2px solid black
-        }
-
-        .title {
-          /* Fallback for calc / vmin */
-          font-size: 2rem;
-          font-size: calc( 2vmin + 1rem);
-        }
-
-        .map-container {
-          height: 100%;
-          /* Fallback for vmin */
-          padding: 0px 1rem 1rem 1rem;
-          padding: 0px 1vmin 1vmin 1vmin;
-        }
-
-        .map-frame {
-          height: 100%;
-          width: 100%;
-        /*   We use outline over border as has issues in some cases */
-          outline: 1px solid black;
-        }
-
-        #map-id {
-          height: 100%;
         }
 
         .custom-menu {
@@ -80,6 +37,7 @@
             border-radius: 5px;
             padding: 0;
         }
+
     </style>
 
     <!-- Make sure you put this AFTER Leaflet's CSS -->
@@ -93,7 +51,6 @@
 
 <body>
     {% block body %}
-    <!-- POPOVER context -->
     <div class="custom-menu">
         <div class="input-group p-2">
             <input type="text" id="emailInput" class="form-control" placeholder="Enter your Email...">
@@ -102,35 +59,7 @@
             </div>
           </div>
     </div>
-     <div class="container">
-      <div class="header row">
-        <div class="form-group col-sm-2">
-          <label for="usr">Category:</label>
-          <div class="form-group">
-            <select id='categories' class="form-control categories">
-              <option value="" selected="selected">Please select categories</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-group col-sm-2">
-          <label for="usr">Sub Category:</label>
-          <div class="form-group">
-            <select id="subcategory" class="form-control">
-              <option value="" selected="selected">Please select sub categories</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-group col-sm-2">
-            <button id = 'search' type="button" class="btn btn-primary">Search</button>
-        </div>
-      </div>
-      <div class="map-container">
-        <div class="map-frame">
-        <div id="mapid"></div>
-    </div>
-  </div>
-</div>
+    <div id="mapid"></div>
     {% endblock %}
 
     <!-- <script src="{% static 'js/app.js' %}"></script> -->
@@ -198,6 +127,7 @@
             request.open("GET", "ajax/categories/", true);
             request.send();
         }
+
 
         function createCategoriesOptions(data){
           data.data.forEach((item) => {
