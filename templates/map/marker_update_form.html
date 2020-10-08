@@ -29,7 +29,17 @@
             <label for="{{ form.longitude.id_for_label }}">Longitude:</label>
             {{ form.longitude }}
         </div>
-       
+        <div class="fieldWrapper">
+            {{ form.category.errors }}
+            <label for="{{ form.description.id_for_label }}">Description:</label>
+            {{ form.category }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.sub_category.errors }}
+            <label for="{{ form.description.id_for_label }}">Description:</label>
+            {{ form.sub_category }}
+        </div>
+
     <input type="submit" value="Update">
 </form>
 </body>

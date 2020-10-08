@@ -131,7 +131,8 @@ class MarkerUpdate(generics.UpdateView):
         form = self.form_class(request.POST)
         if form.is_valid():
             # get values data = form.cleaned_data
-            return HttpResponse("marker is succesfully updated")
+            #return HttpResponse("marker is succesfully updated")
+            return render(request, 'index.html', {})
 
         return render(
             request, self.template_name, {'form': form})

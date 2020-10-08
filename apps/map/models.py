@@ -16,11 +16,14 @@ class BaseModel(models.Model):
         abstract = True
 class Category(BaseModel):
     category = models.CharField(max_length=255)
+    def __str__(self):
+     return format(self.category)
 
 class SubCategory(BaseModel):
   sub_category = models.CharField(max_length=255)
   category = models.ForeignKey(Category, on_delete = models.CASCADE)
-
+  def __str__(self):
+     return format(self.sub_category)
 
 
 class Marker(BaseModel):
