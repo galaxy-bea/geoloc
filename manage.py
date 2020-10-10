@@ -2,15 +2,7 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-
-
-STATIC_URL = '/static/'
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'collectstatic')
-
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
+from GeoLoc.settings import *
 
 def main():
     """Run administrative tasks."""
