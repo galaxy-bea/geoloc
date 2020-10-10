@@ -2,7 +2,6 @@ let mymap;
 let newMarkerLatLng;
 
 $(document).ready(function () {
-    console.log('status')
     initMap();
 });
 
