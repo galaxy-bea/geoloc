@@ -7,11 +7,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <base href="/"/>
-    <link rel="stylesheet" href="{% static 'css/leaflet.css' %}"></link>
-    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}"></link>
-    <link rel="stylesheet" href="{% static 'css/font-awesome.css' %}"></link>
-    <script src="{% static 'js/jquery.min.js' %}"></script>
-    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://rawcdn.githack.com/python-visualization/folium/master/folium/templates/leaflet.awesome.rotate.css"/>
     <style>
         html, body {width: 100%;height: 100%;margin: 0;padding: 0;}
 
@@ -37,6 +42,56 @@
             border-radius: 5px;
             padding: 0;
         }
+
+        .form-control {
+          background: #f2f2f2;
+          box-shadow: none !important;
+          border: none;
+        }
+        .form-control:focus {
+          background: #e2e2e2;
+        }
+        .form-control, .btn {
+          border-radius: 3px;
+        }
+        .signup-form {
+          width: 400px;
+          margin: 0 px auto;
+        }
+        .signup-form form {
+          color: #999;
+          border-radius: 3px;
+          margin-bottom: 15px;
+          background: #fff;
+          box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+          padding: 10px;
+        }
+
+        .signup-form input[type="checkbox"] {
+          margin-top: 3px;
+        }
+        .signup-form .row div:first-child {
+          padding-right: 10px;
+        }
+        .signup-form .row div:last-child {
+          padding-left: 10px;
+        }
+
+        .signup-form a {
+          color: #fff;
+          text-decoration: underline;
+        }
+        .signup-form a:hover {
+          text-decoration: none;
+        }
+        .signup-form form a {
+          color: #3598dc;
+          text-decoration: none;
+        }
+        .signup-form form a:hover {
+          text-decoration: underline;
+        }
+
 
     </style>
     <link rel="stylesheet" href="{% static 'css/filter.css' %}"></link>
