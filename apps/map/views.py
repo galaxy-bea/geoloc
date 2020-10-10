@@ -8,7 +8,7 @@ from .utils import *
 from .models import Marker
 from .models import Category
 from .models import SubCategory
-
+from django.shortcuts import redirect
 from .forms import MarkerUpdateForm
 from django.views import View
 from django.template.loader import render_to_string
@@ -119,7 +119,6 @@ def email_marker_form_url(to_email, marker_id, url):
     msg.send()
 
 
-
 class MarkerUpdate(generics.UpdateView):
     """Marker update view"""
 
@@ -128,13 +127,44 @@ class MarkerUpdate(generics.UpdateView):
     form_class = MarkerUpdateForm
 
     def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
+        instance = Marker.objects.get(id=kwargs['pk'])
+        form = self.form_class(request.POST or None, instance=instance)
+
         if form.is_valid():
-            # get values data = form.cleaned_data
-            #return HttpResponse("marker is succesfully updated")
-            return render(request, 'index.html', {})
+            #instance['is_active'] = True
+            instance.is_active = True
+            #import pdb;pdb.set_trace()
+            form.save()
+            return redirect('/')
 
         return render(
             request, self.template_name, {'form': form})
 
 
+
+    def categories(request):
+        """Get all DB Categories"""
+
+        if request.method == "GET":
+          category = list(Category.objects.values('id', 'category'))
+          data = {
+                'message': "category successfully fetched!",
+                'data': category
+            }
+          return JsonResponse(data)
+    def load_cities(request, *args, **kwargs):
+
+        if request.method == "GET":
+            category_id = request.GET.get('category')
+            data = list(SubCategory.objects.filter(id=category_id).values('id', 'sub_category'))
+            data = {
+                    'message': "category successfully fetched!",
+                    'data': data
+                }
+        else:
+            data = {
+                'message': "category successfully fetched!",
+                'data': data
+            }
+
+        return JsonResponse(data)
