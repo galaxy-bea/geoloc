@@ -46,7 +46,6 @@ if os.environ.get('DJANGO_PRODUCTION'):
       'django.contrib.sessions',
       'django.contrib.messages',
       'django.contrib.staticfiles',
-      "folium_app"
   ]
 
   MIDDLEWARE = [
