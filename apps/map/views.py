@@ -48,7 +48,7 @@ def getAllMarkers(request):
     """Get all DB Markers"""
 
     if request.method == "GET":
-      markers = list(Marker.objects.values('id', 'email', 'latitude', 'longitude'))
+      markers = list(Marker.objects.filter(is_active=True).values('id', 'email', 'latitude', 'longitude', 'category', 'sub_category'))
       data = {
             'message': "successfully fetched!",
             'data': markers

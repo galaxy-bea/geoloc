@@ -87,7 +87,7 @@
     <div class="form-group">
       <div class="d-flex justify-content-end">
         <button id="search" type="button" class="btn btn-sm btn-outline-primary mx-2"><i class="fa fa-search"></i></button>
-        <button class="btn btn-sm btn-outline-primary"><i class="fa fa-refresh"></i></button>
+        <button id="resetFilters" class="btn btn-sm btn-outline-primary"><i class="fa fa-refresh"></i></button>
     </div>
     </form>
 </div>
@@ -126,14 +126,19 @@
         var categories = $("#categories").val()
         var subcategories = $("#subcategory").val()
 
-        $.ajax({
-          type: "POST",
-          url: "ajax/search/",
-          data: { categories : categories, subcategories: subcategories }
-        }).done(function(data){
-          generateMarkers(data)
+            $.ajax({
+              type: "POST",
+              url: "ajax/search/",
+              data: { categories : categories, subcategories: subcategories }
+            }).done(function(data){
+              generateMarkers(data)
+            });
         });
-     });
+
+       $("#resetFilters").click(function(){
+            resetFilters()
+        });
+
 
     });
 
@@ -195,6 +200,8 @@
     function resetFilters(){
       $("#subcategory").empty()
       $("#subcategory").append('<option value="init" selected>--Select SubCategories--</option>')
+      $("#categories").empty()
+      $("#categories").append('<option value="init" selected>--Select SubCategories--</option>')
     }
 
     function generateMarkers(data) {
@@ -205,6 +212,7 @@
     }
 
     function placeMarker(lat, long, data){
+
       marker =
         L.marker([lat, long]).bindPopup(data).addTo(mymap).on('click', function(e) {
         });
