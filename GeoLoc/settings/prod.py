@@ -7,9 +7,9 @@ import dj_database_url
 EMAIL_HOST = 'smtp.mailgun.org'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-DEFAULT_EMAIL_TO = ["shivam2012@mailinator.com"]
-EMAIL_HOST_USER = "postmaster@sandboxa9a9c15061884f7aa6cb8a74c1e9d8ea.mailgun.org"
-EMAIL_HOST_PASSWORD = "0d9e8f149485a73073c70211b441f933-aff2d1b9-138fb0d5"
+DEFAULT_EMAIL_TO = ["stabey@gmail.com"]
+EMAIL_HOST_USER = "postmaster@sandbox0a70599ca2d2475686f5142d24c4d49c.mailgun.org"
+EMAIL_HOST_PASSWORD = "61159938a0e7241ed04d83bc1e3f8a70-2fbe671d-c726a4bf"
 SECRET_KEY = 'h^xwxv@cgq5m2ue#(y861#_7q4)0jme#+jz!xayo8&6cn@vbc2'
 
 if os.environ.get('DJANGO_PRODUCTION'):
