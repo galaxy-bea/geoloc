@@ -8,8 +8,8 @@ EMAIL_HOST = 'smtp.mailgun.org'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_EMAIL_TO = ["stabey@gmail.com"]
-EMAIL_HOST_USER = "postmaster@sandbox0a70599ca2d2475686f5142d24c4d49c.mailgun.org"
-EMAIL_HOST_PASSWORD = "61159938a0e7241ed04d83bc1e3f8a70-2fbe671d-c726a4bf"
+EMAIL_HOST_USER = "postmaster@mg.wordwideweb.info"
+EMAIL_HOST_PASSWORD = "0b67545fd99bcdfbd0188849ef9397ff-2fbe671d-311eef58"
 SECRET_KEY = 'h^xwxv@cgq5m2ue#(y861#_7q4)0jme#+jz!xayo8&6cn@vbc2'
 
 if os.environ.get('DJANGO_PRODUCTION'):
