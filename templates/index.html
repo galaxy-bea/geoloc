@@ -303,11 +303,11 @@
             $(".custom-menu").hide(100);
         }
     });
-    $(document).bind("taphold", function (e) {
-        if (!$(e.target).parents(".custom-menu").length > 0) {
-            $(".custom-menu").hide(100);
-        }
-    });
+    // $(document).bind("taphold", function (e) {
+    //     if (!$(e.target).parents(".custom-menu").length > 0) {
+    //         $(".custom-menu").hide(100);
+    //     }
+    // });
 
     function initMap() {
         mymap = L.map('mapid').fitWorld();
@@ -316,16 +316,25 @@
             attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
                 '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
                 'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+            tap: true,
             id: 'mapbox/streets-v11',
             tileSize: 512,
             zoomOffset: -1
         }).addTo(mymap);
         mymap.locate({setView: true, maxZoom: 16});
 
-
+        // mymap.on('touchstart', function() {
+        //   console.log("event_finre")
+        // });
+        mymap.on('mousedown', function(e) {
+          if (!$(e.target).parents(".custom-menu").length > 0) {
+            $(".custom-menu").hide(100);
+          }
+        });
         mymap.on('contextmenu', (e) => {
-            console.log('eeee', e.originalEvent.pageY);
-
+          if (!$(e.target).parents(".custom-menu").length > 0) {
+            $(".custom-menu").hide(100);
+          }
             $(".custom-menu")
                 .finish()
                 .toggle(100)
