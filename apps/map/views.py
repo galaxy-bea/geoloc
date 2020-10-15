@@ -8,7 +8,7 @@ from .utils import *
 from .models import Marker
 from .models import Category
 from .models import SubCategory
-
+from django.shortcuts import redirect
 from .forms import MarkerUpdateForm
 from django.views import View
 from django.template.loader import render_to_string
@@ -16,11 +16,11 @@ from django.forms.models import model_to_dict
 import folium
 import json
 
+
 # index
 def index(request):
     if request.method == "GET":
         return render(request, 'index.html', {})
-
 
 
 # send email to user
@@ -43,37 +43,39 @@ def create_marker(request):
         return JsonResponse(data)
 
 
-
 def getAllMarkers(request):
     """Get all DB Markers"""
 
     if request.method == "GET":
-      markers = list(Marker.objects.values('id', 'email', 'latitude', 'longitude'))
-      data = {
+        markers = list(Marker.objects.filter(is_active=True).values('id', 'email', 'latitude', 'longitude', 'category__category', 'sub_category__sub_category', 'description'))
+        data = {
             'message': "successfully fetched!",
             'data': markers
         }
-      return JsonResponse(data)
+        return JsonResponse(data)
+
 
 def categories(request):
     """Get all DB Categories"""
 
     if request.method == "GET":
-      category = list(Category.objects.values('id', 'category'))
-      data = {
+        category = list(Category.objects.values('id', 'category'))
+        data = {
             'message': "category successfully fetched!",
             'data': category
         }
-      return JsonResponse(data)
+        return JsonResponse(data)
+
 
 def subcategories(request):
     if request.method == "POST":
         post_data = request.POST
-        data = list(SubCategory.objects.filter(id=post_data['id']).values('id', 'sub_category'))
+        data = list(SubCategory.objects.filter(category_id=post_data['id']).values('id', 'sub_category'))
+        #import pdb;pdb.set_trace()
         data = {
-                'message': "category successfully fetched!",
-                'data': data
-            }
+            'message': "category successfully fetched!",
+            'data': data
+        }
     else:
         data = {
             'message': "category successfully fetched!",
@@ -86,29 +88,31 @@ def search(request):
     if request.method == "POST":
         post_data = request.POST
         if post_data['categories']:
-            data = list(Marker.objects.filter(category_id=post_data['categories'], sub_category_id=post_data['subcategories']).values('id', 'email', 'latitude', 'longitude'))
+            data = list(Marker.objects.filter(category_id=post_data['categories'],
+                                              sub_category_id=post_data['subcategories']).values('id', 'email',
+                                                                                                 'latitude',
+                                                                                                 'longitude'))
             data = {
-                    'message': "search successfully!",
-                    'data': data
-                    }
+                'message': "search successfully!",
+                'data': data
+            }
     return JsonResponse(data)
+
 
 def save_marker(data):
     """saving location in DB"""
     print(data)
     m = Marker(latitude=float(data['latitude']),
-        longitude=float(data['longitude']), email=data['email'])
+               longitude=float(data['longitude']), email=data['email'])
     m.wrap_location()
     m.save()
 
     return m.id
 
 
-
 def email_marker_form_url(to_email, marker_id, url):
     """sending marker form url through email"""
     subject, from_email, to = 'complete the marker', 'admin@example.com', to_email
-
 
     html_content = render_to_string(
         'map/marker_email.html',
@@ -119,7 +123,6 @@ def email_marker_form_url(to_email, marker_id, url):
     msg.send()
 
 
-
 class MarkerUpdate(generics.UpdateView):
     """Marker update view"""
 
@@ -128,12 +131,43 @@ class MarkerUpdate(generics.UpdateView):
     form_class = MarkerUpdateForm
 
     def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
+        instance = Marker.objects.get(id=kwargs['pk'])
+        form = self.form_class(request.POST or None, instance=instance)
+
         if form.is_valid():
-            # get values data = form.cleaned_data
-            return HttpResponse("marker is succesfully updated")
+            # instance['is_active'] = True
+            instance.is_active = True
+            # import pdb;pdb.set_trace()
+            form.save()
+            return redirect('/')
 
         return render(
             request, self.template_name, {'form': form})
 
+    def categories(request):
+        """Get all DB Categories"""
 
+        if request.method == "GET":
+            category = list(Category.objects.values('id', 'category'))
+            data = {
+                'message': "category successfully fetched!",
+                'data': category
+            }
+            return JsonResponse(data)
+
+    def load_cities(request, *args, **kwargs):
+
+        if request.method == "GET":
+            category_id = request.GET.get('category')
+            data = list(SubCategory.objects.filter(category_id=category_id).values('id', 'sub_category'))
+            data = {
+                'message': "category successfully fetched!",
+                'data': data
+            }
+        else:
+            data = {
+                'message': "category successfully fetched!",
+                'data': data
+            }
+
+        return JsonResponse(data)

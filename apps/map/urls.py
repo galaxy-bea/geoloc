@@ -10,5 +10,6 @@ urlpatterns = [
     path('ajax/categories/', csrf_exempt(views.categories)),
     path('ajax/search/', csrf_exempt(views.search)),
     path('ajax/subcategories/', csrf_exempt(views.subcategories)),
+    path('ajax/load_sub_categories/', views.MarkerUpdate.load_cities),
     path('update-marker/<int:pk>', views.MarkerUpdate.as_view(), name="update_marker"),
 ]
