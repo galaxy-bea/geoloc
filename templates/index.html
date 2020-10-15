@@ -248,12 +248,8 @@
     function createSubCategoriesOptions(data){
     $('#subcategory').empty()
       data.data.forEach((item) => {
-
-
-
-            $('#subcategory').append(new Option(item.sub_category, item.id));
-            $('#subcategory').trigger("chosen:updated");
-
+        $('#subcategory').append(new Option(item.sub_category, item.id));
+        $('#subcategory').trigger("chosen:updated");
       });
     }
 
@@ -267,12 +263,12 @@
     function generateMarkers(data) {
       markersLayer.clearLayers();
       data.data.forEach((item) => {
-        placeMarker(item.latitude, item.longitude, item.email)
+        popUpContent =  "<h3>" + item.category__category + "</h3>" + "<h5>" + item.sub_category__sub_category + "</h5>" + item.description + "</h3> <hr> <button type='button' class='btn btn-success'>Contact</button>"
+        placeMarker(item.latitude, item.longitude, popUpContent)
       });
     }
 
     function placeMarker(lat, long, data){
-
       marker =
         L.marker([lat, long]).bindPopup(data).addTo(mymap).on('click', function(e) {
         });
@@ -323,9 +319,6 @@
         }).addTo(mymap);
         mymap.locate({setView: true, maxZoom: 16});
 
-        // mymap.on('touchstart', function() {
-        //   console.log("event_finre")
-        // });
         mymap.on('mousedown', function(e) {
           if (!$(e.target).parents(".custom-menu").length > 0) {
             $(".custom-menu").hide(100);
@@ -354,13 +347,8 @@
 
             return;
         }
-        console.log(email)
-
         newMarkerLatLng = null;
-
     }
-
-
 
     // ajax example
     function sendEmail(email, lat, long) {
@@ -377,10 +365,8 @@
         // Defining event listener for readystatechange event
         request.onreadystatechange = function () {
             if (this.readyState === 4 && this.status === 200) {
-                console.log(this.responseText);
             }
         };
-
         // Sending the request to the server
         request.send(data);
     }

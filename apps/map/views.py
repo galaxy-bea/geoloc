@@ -47,8 +47,7 @@ def getAllMarkers(request):
     """Get all DB Markers"""
 
     if request.method == "GET":
-        markers = list(Marker.objects.filter(is_active=True).values('id', 'email', 'latitude', 'longitude', 'category',
-                                                                    'sub_category'))
+        markers = list(Marker.objects.filter(is_active=True).values('id', 'email', 'latitude', 'longitude', 'category__category', 'sub_category__sub_category', 'description'))
         data = {
             'message': "successfully fetched!",
             'data': markers
@@ -84,7 +83,6 @@ def subcategories(request):
         }
 
     return JsonResponse(data)
-
 
 def search(request):
     if request.method == "POST":

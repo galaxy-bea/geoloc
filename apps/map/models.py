@@ -39,8 +39,11 @@ class Marker(BaseModel):
     longitude = models.FloatField()
     category = models.ForeignKey(Category, on_delete = models.CASCADE, default='', null=True, blank=True)
     sub_category = models.ForeignKey(SubCategory, on_delete = models.CASCADE, default='', null=True, blank=True)
+
+    def __str__(self):
+     return self.category
+
     def wrap_location(self):
         """Save location."""
-
         print("coordinates:",self.longitude, self.latitude)
         self.location = Point(self.longitude, self.latitude)
