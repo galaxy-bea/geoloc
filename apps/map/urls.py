@@ -12,4 +12,5 @@ urlpatterns = [
     path('ajax/subcategories/', csrf_exempt(views.subcategories)),
     path('ajax/load_sub_categories/', views.MarkerUpdate.load_cities),
     path('update-marker/<int:pk>', views.MarkerUpdate.as_view(), name="update_marker"),
+    path('mailgun/create_route/', csrf_exempt(views.create_route)),
 ]

@@ -18,3 +18,4 @@ protobuf==3.6.1
 psycopg2==2.8.6
 psycopg2-binary==2.8.6
 whitenoise==5.2.0
+pycrypto==2.6.1

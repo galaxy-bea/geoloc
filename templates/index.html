@@ -125,6 +125,9 @@
 <div class="signup-form">
     <form>
       <div class="form-group">
+        <input type="text" class="form-control" id="searchText" placeholder="Search">
+      </div>
+      <div class="form-group">
       <div class="row">
         <div class="col">
           <select class="form-control categories" id="categories">
@@ -178,23 +181,26 @@
         });
 
       $("#search").click(function(){
-        var categories = $("#categories").val()
-        var subcategories = $("#subcategory").val()
+        var searchText = $("#searchText").val()
+        var categories = searchText == '' ? $("#categories").val() : $("#categories").find("option:selected").text()
+        var subcategories = searchText == '' ? $("#subcategory").val() : $("#subcategory").find("option:selected").text()
+          $.ajax({
+            type: "POST",
+            url: "ajax/search/",
+            data: {
+              categories : categories,
+              subcategories: subcategories,
+              searchText: searchText
+            }
+          }).done(function(data){
+            Object.keys(data.data).length > 0 ? generateMarkers(data, true) : window.location.reload()
 
-            $.ajax({
-              type: "POST",
-              url: "ajax/search/",
-              data: { categories : categories, subcategories: subcategories }
-            }).done(function(data){
-              generateMarkers(data)
-            });
+          });
         });
 
        $("#resetFilters").click(function(){
             resetFilters()
         });
-
-
     });
 
 
@@ -260,18 +266,23 @@
       $("#categories").append('<option value="init" selected>--Select SubCategories--</option>')
     }
 
-    function generateMarkers(data) {
+    function generateMarkers(data, search = false) {
       markersLayer.clearLayers();
       data.data.forEach((item) => {
-        popUpContent =  "<h3>" + item.category__category + "</h3>" + "<h5>" + item.sub_category__sub_category + "</h5>" + item.description + "</h3> <hr> <button type='button' class='btn btn-success'>Contact</button>"
-        placeMarker(item.latitude, item.longitude, popUpContent)
+        posterContactButton = "</h3> <hr> <button id='dataDiv' onclick=contactPoster('"+item.id+"') type='button' class='btn btn-sm btn-success'>Contact</button>"
+       popUpContent =  "<h3>" + item.category__category + "</h3>" + "<h5>" + item.sub_category__sub_category + "</h5>" + item.description + posterContactButton
+        placeMarker(item.latitude, item.longitude, popUpContent, search)
       });
     }
 
-    function placeMarker(lat, long, data){
+    function placeMarker(lat, long, data, search){
       marker =
         L.marker([lat, long]).bindPopup(data).addTo(mymap).on('click', function(e) {
         });
+      if(search){
+        mymap.panTo(new L.LatLng(lat, long));
+        //L.circleMarker([lat, long], {radius: 25}).addTo(mymap);
+      }
       markersLayer.addLayer(marker);
       markersLayer.addTo(mymap);
     }
@@ -338,7 +349,7 @@
 
             newMarkerLatLng = e.latlng
         });
-    }
+      }
 
     function addNewMarker() {
         const email = $('#email').val();
@@ -369,6 +380,16 @@
         };
         // Sending the request to the server
         request.send(data);
+    }
+
+    function contactPoster(poster){
+      $.ajax({
+            type: "POST",
+            url: "mailgun/create_route/",
+            data: { id: poster }
+      }).done(function(data){
+        window.location = 'mailto:' + data.responseEmail;
+      });
     }
 
 </script>
