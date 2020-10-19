@@ -5,43 +5,49 @@
     {% load static %}
     {% block title %}<title>GeoLoc</title>{% endblock %}
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <base href="/"/>
-
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.js"></script>
-    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.css"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
     <link rel="stylesheet" href="https://rawcdn.githack.com/python-visualization/folium/master/folium/templates/leaflet.awesome.rotate.css"/>
+
     <style>
-        html, body {width: 100%;height: 100%;margin: 0;padding: 0;}
-
-        #mapid {
-            position: relative;
-            width: 100.0%;
-            height: 100.0%;
-            left: 0.0%;
-            top: 0.0%;
-            height: 100%;
-        }
-
-        .custom-menu {
-            display: none;
-            z-index: 1000;
-            position: absolute;
-            overflow: hidden;
-            border: 1px solid #CCC;
-            white-space: nowrap;
-            font-family: sans-serif;
-            background: #FFF;
-            color: #333;
-            border-radius: 5px;
+      body {
             padding: 0;
+            margin: 0;
         }
+      html, body, #map {
+          height: 100%;
+          width: 100vw;
+      }
+      #mapid {
+          position: relative;
+          width: 100.0%;
+          height: 100.0%;
+          left: 0.0%;
+          top: 0.0%;
+          height: 100%;
+      }
+
+      .custom-menu {
+          display: none;
+          z-index: 1000;
+          position: absolute;
+          overflow: hidden;
+          border: 1px solid #CCC;
+          white-space: nowrap;
+          font-family: sans-serif;
+          background: #FFF;
+          color: #333;
+          border-radius: 5px;
+          padding: 0;
+      }
 
         .form-control {
           background: #f2f2f2;
@@ -61,7 +67,6 @@
         .signup-form form {
           color: #999;
           border-radius: 3px;
-          margin-bottom: 15px;
           background: #fff;
           box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
           padding: 10px;
@@ -94,23 +99,14 @@
 
 
     </style>
-    <link rel="stylesheet" href="{% static 'css/filter.css' %}"></link>
-    <!-- Make sure you put this AFTER Leaflet's CSS -->
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
-        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
-        crossorigin=""></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.css"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
-    <link rel="stylesheet" href="https://rawcdn.githack.com/python-visualization/folium/master/folium/templates/leaflet.awesome.rotate.css"/>
+
 
 </head>
 
 <body>
     {% block body %}
+    <div id="custom-filter">
+    </div>
     <div class="custom-menu">
         <div class="input-group p-2">
             <input type="text" id="emailInput" class="form-control" placeholder="Enter your Email...">
@@ -129,14 +125,20 @@
       </div>
       <div class="form-group">
       <div class="row">
-        <div class="col">
+        <div class="col-xs-6 col-sm-6 col-md-6">
           <select class="form-control categories" id="categories">
             <option value='init' selected>--Categories--</option>
+            <option value='init' selected>--Sub Categories--</option>
+            <option value='init' selected>--Sub Categories--</option>
+            <option value='init' selected>--Sub Categories--</option>
+            <option value='init' selected>--Sub Categories--</option>
+            <option value='init' selected>--Sub Categories--</option>
           </select>
         </div>
-        <div class="col">
+        <div class="col-xs-6 col-sm-6 col-md-6">
           <select class="form-control" id="subcategory">
               <option value='init' selected>--Sub Categories--</option>
+
             </select>
 
         </div>
@@ -158,11 +160,25 @@
     let getAllMarkers;
     let categories;
 
+    // $(window).resize(function(e) {
+    //   if ($(window).width() <= 768) {
+    //       initFilter();
+    //     }else{
+    //       selector.addTo(mymap);
+    //   }
+    // });
+
     $(document).ready(function () {
         initMap();
         getAllMarker();
         getCategories();
-        selector.addTo(mymap);
+        if ($(window).width() <= 768) {
+          initFilter();
+        }else{
+          selector.addTo(mymap);
+        }
+
+
 
         $('#categories').on('change', function() {
             var selectedCountry = $(".categories option:selected").val();
@@ -215,6 +231,13 @@
       return div;
     };
 
+    function initFilter(){
+      var div = L.DomUtil.create('div', 'mySelector');
+      var template = $('#hidden-template').html();
+      div.innerHTML = template;
+      $("#custom-filter").append(template)
+    }
+
 
 
     // ajax example
@@ -246,9 +269,9 @@
 
 
     function createCategoriesOptions(data){
-      data.data.forEach((item) => {
-        $('#categories').append(new Option(item.category, item.id));
-      });
+      // data.data.forEach((item) => {
+      //   $('#categories').append(new Option(item.category, item.id));
+      // });
     }
 
     function createSubCategoriesOptions(data){
